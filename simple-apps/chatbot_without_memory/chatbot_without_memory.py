@@ -45,8 +45,8 @@ sys_message = SystemMessage(content="You are a helpful assistant")
 st.title("AI Chatbot without memory")
 st.subheader("What would you like to know today?")
 
+# Takes in user input
 user_input = st.text_area("Write something")
-# user_input = st.text_input("Write something")
 
 if st.button("Send") or user_input:
     if user_input:
