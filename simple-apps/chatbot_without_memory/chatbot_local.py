@@ -1,6 +1,5 @@
 import os
-from dotenv import load_dotenv
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import OllamaLLM
 from typing import Annotated
 from langchain_core.messages import AnyMessage, SystemMessage, HumanMessage
 from typing_extensions import TypedDict
@@ -8,18 +7,8 @@ from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 import streamlit as st
 
-# Load environment variables
-load_dotenv()
-my_google_api_key = os.getenv("GOOGLE_API_KEY")
-
-# Checking if key is present or not
-if not my_google_api_key:
-    print("GOOGLE_API_KEY secret not found or not attached!")
-else:
-    # Checking model
-    model = ChatGoogleGenerativeAI(model="gemini-2.5-flash", api_key=my_google_api_key)
-    print("Model loaded - API is working")
-
+# Importing a model locally
+model = OllamaLLM(model="llama3.1:8b")
 
 # Define the state
 class State(TypedDict):
@@ -41,7 +30,7 @@ graph = graph_builder.compile()
 # Define the system prompt
 sys_message = SystemMessage(content="You are a helpful assistant")
 
-# App building with streamlit
+# Streamlit Interface (App building)
 st.title("AI Chatbot without memory")
 st.subheader("What would you like to know today?")
 
@@ -65,4 +54,4 @@ if st.button("Send") or user_input:
         st.warning("Please enter a message first")
 
 # display footer
-st.markdown("Powered by Gemini")
+st.markdown("Powered by Ollama")
