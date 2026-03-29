@@ -1,0 +1,12 @@
+langchain
+langchain-core
+langchain-google-genai
+langchain-tavily
+langchain-community
+langgraph
+streamlit
+python-dotenv
+duckduckgo-search
+six
+urllib3
+typing-extensions
