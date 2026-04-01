@@ -1,4 +1,4 @@
-ddgs==2.9.1
+ddgs==9.11.4
 langchain_community==0.4.1
 langchain_core==1.2.21
 langchain_google_genai==4.2.1
