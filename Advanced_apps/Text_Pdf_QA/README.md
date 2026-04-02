@@ -24,11 +24,11 @@ This application further includes some certain caching mechanisms. Once a file i
 ### 5. **Show more updates**
 It shows many updates about the current status for your questioning task.
 
-*   **Why this is good:** Your document's content is never sent to a third-party service for anything. The entire application runs on your own device. This enhances privacy and makes the application suitable for sensitive or confidential documents. It also significantly reduces operational costs as no API costs are involved.
+*  **Why this is good:** Your document's content is never sent to a third-party service for anything. The entire application runs on your own device. This enhances privacy and makes the application suitable for sensitive or confidential documents. It also significantly reduces operational costs as no API costs are involved.
 
-*  Additionally, This prompt was tested extensively and has been found to work really well.it makes sure that, even if the answer isn't in the document, the application will tell you, ensuring a high degree of trust and reliability.
+*  Additionally, The prompts used inside the app were tested extensively and has been found to work really well. It makes sure that, even if the answer isn't in the document, the application will tell you, ensuring a high degree of trust and reliability.
 
-### 4. **Interactive & Easy-to-Use Interface**
+### 6. **Interactive & Easy-to-Use Interface**
 Built with Streamlit, the application is incredibly user-friendly. No command-line knowledge is needed. Simply:
 1.  Upload your PDF.
 2.  Select your preferred retrieval strategy from a dropdown menu.
@@ -42,6 +42,6 @@ Built with Streamlit, the application is incredibly user-friendly. No command-li
 *   **Flexible & Experimental**: The ability to switch between different retrieval methods allows you to experiment and find the optimal approach for your specific documents and query types.
 
 ## Further Notes
-This version of pdf_rag is meant for text heavy PDFs only. For PDFs with many images or tables. I have designed an even more advanced multimodal RAG system suitable for that.Stay tuned for that.
+This version of pdf_rag is meant for text heavy PDFs only. For PDFs with many images or tables. I have designed an even more advanced multimodal RAG system suitable for that. Stay tuned for that.
 
 All of these RAG systems can be combined later on to form a full blown RAG app as well.

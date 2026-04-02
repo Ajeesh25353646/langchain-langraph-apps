@@ -5,7 +5,7 @@ A CFO-level multi-agent system built with **LangGraph** designed to provide stra
 [![Python 3.9+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-purple.svg)](https://github.com/langchain-ai/langgraph)
 [![Gemini](https://img.shields.io/badge/LLM-Gemini--3.1--Flash--Lite-green.svg)](https://ai.google.dev/)
-[![Streamlit App](https://img.shields.io/badge/Streamlit-Cloud-FF4B4B?logo=streamlit)](https://your-app-name.streamlit.app)
+[![Streamlit App](https://img.shields.io/badge/Streamlit-Cloud-FF4B4B?logo=streamlit)](https://forex-advisor-agent.streamlit.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
@@ -14,8 +14,8 @@ A CFO-level multi-agent system built with **LangGraph** designed to provide stra
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd Advanced_Strategic_Finance_Agent
+git clone https://github.com/Ajeesh25353646/langchain-langraph-apps.git
+cd Advanced_apps/Advanced_Strategic_Finance_Agent
 
 # Install dependencies
 pip install -r requirements.txt
@@ -179,7 +179,6 @@ Since real-world financial APIs and LLMs (like Gemini or Tavily) require valid A
 
 ```text
 platform linux -- Python 3.12.13, pytest-9.0.2, pluggy-1.6.0
-rootdir: /root/Completed_projects/Advanced_Strategic_Finance_Agent
 plugins: anyio-4.9.0, langsmith-0.7.17
 collected 10 items                                                                                                              
 

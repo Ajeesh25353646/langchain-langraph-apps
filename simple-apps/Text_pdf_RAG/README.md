@@ -18,7 +18,7 @@ Privacy and cost are critical. Instead of relying on a paid, external API to cre
 *   **Why this is good:** Your document's content is never sent to a third-party service for embedding. This enhances privacy and makes the application suitable for sensitive or confidential documents. It also significantly reduces operational costs.
 
 ### 3. **High-Fidelity Answers with Google Gemini**
-The final answer generation is powered by Google's `gemini-2.5-flash` model. A carefully engineered prompt instructs the model to answer **only** from the information provided in the retrieved document excerpts.
+The final answer generation is powered by Google's `Gemini-2.5-flash` model. A carefully engineered prompt instructs the model to answer **only** from the information provided in the retrieved document excerpts.
 
 *   **Why this is good:** This prompt dramatically reduces the risk of the model "hallucinating" or making up information. If the answer isn't in the document, the application will tell you, ensuring a high degree of trust and reliability.
 

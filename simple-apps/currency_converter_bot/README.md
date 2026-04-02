@@ -1,6 +1,6 @@
 # 💰 AI Currency Converter Bot (LangGraph + Gemini)
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![LangGraph](https://img.shields.io/badge/Orchestration-LangGraph-purple.svg)](https://github.com/langchain-ai/langgraph)
 [![Gemini](https://img.shields.io/badge/LLM-Gemini--3--Flash-green.svg)](https://ai.google.dev/)
 
@@ -66,8 +66,8 @@ In 2026, standard "black-box" agents are no longer sufficient for production. I 
 ### 2. Why ReAct Pattern?
 The **Reason + Act (ReAct)** pattern ensures the LLM doesn't just "guess" rates. It forces the model to think, search for real-time data, and then provide a verified answer based on its observations.
 
-### 3. Why Gemini-3-Flash?
-Gemini-3-Flash offers an exceptional balance of speed and reasoning capability. Its high context window and native tool-calling support make it the ideal engine for a responsive, real-time agent.
+### 3. Why Gemini-3.1-flash-lite-preview?
+Gemini-3.1-flash-lite-preview is the latest model from Google that offers an exceptional balance of speed and reasoning capability. Its high context window and native tool-calling support make it the ideal engine for a responsive, real-time agent.
 
 ### 4. Why Dual Search (Tavily + DDG)?
 Redundancy is key. If one search provider is rate-limited or unavailable, the agent can fallback to the other, ensuring 99.9% uptime for conversion requests.
@@ -104,8 +104,8 @@ Redundancy is key. If one search provider is rate-limited or unavailable, the ag
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/yourusername/simple-currency-converter.git
-   cd simple-currency-converter
+   git clone https://github.com/Ajeesh25353646/langchain-langraph-apps.git
+   cd simple-apps/currency_converter_bot
    ```
 
 2. **Install Dependencies**

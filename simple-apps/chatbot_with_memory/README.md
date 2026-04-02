@@ -28,7 +28,7 @@ This is a simple chatbot application which supports multiturn conversations.
 
 The `Simple_chatbot.py` file contains the following:
 
-- **Model Initialization:** Initializes the chat model using.
+- **Model Initialization:** Initializes the chat model using LangChain.
 - **State Definition:** Defines the state of the graph, which holds the messages.
 - **Chatbot Node:** Defines the node that interacts with the chat model.
 - **Graph Definition:** Creates the graph, adds the chatbot node, and defines the edges.
