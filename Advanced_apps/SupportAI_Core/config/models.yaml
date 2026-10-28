@@ -1,0 +1,30 @@
+judge_models:
+  nvidia_content_safety:
+    provider: nvidia
+    model: nvidia/nemotron-3-content-safety
+    label: "Nvidia - Content Safety"
+
+  google_gemma_4:
+    provider: google
+    model: gemma-4-31b-it
+    label: "Google - Gemma 4 31B"
+
+  openrouter_gpt_oss:
+    provider: openrouter
+    model: openai/gpt-oss-120b:free
+    label: "OpenRouter - GPT-OSS-120B"
+
+  nvidia_nemotron_3:
+    provider: nvidia
+    model: nvidia/nemotron-3-super-120b-a12b
+    label: "Nvidia - Nemotron 3 Super"
+
+  nvidia_deepseek_v4:
+    provider: nvidia
+    model: deepseek-ai/deepseek-v4-flash
+    label: "Nvidia - DeepSeek V4 Flash"
+
+  nvidia_glm_5:
+    provider: nvidia
+    model: z-ai/glm-5.1
+    label: "Nvidia - GLM-5.1"

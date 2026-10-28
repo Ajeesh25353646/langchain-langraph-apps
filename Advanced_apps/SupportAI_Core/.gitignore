@@ -1,0 +1,33 @@
+# --- Secrets ---
+.env
+
+# --- Python ---
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+
+# --- IDE / OS ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Windows Zone.Identifier artifacts ---
+*:Zone.Identifier
+
+# --- Runtime data (created by running the app) ---
+*.db
+*.jsonl
+support_logs.db
+ticket_logs.jsonl
+
+# --- Understand Anything & Codegraph (dev-only, not project code) ---
+.understand-anything/
+.codegraph/
+graphify-out/

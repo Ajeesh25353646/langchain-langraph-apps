@@ -1,0 +1,19 @@
+.env
+__pycache__
+*.pyc
+.git
+*.log
+*.db
+*.jsonl
+.gitignore
+README.md
+Dockerfile
+LICENSE
+
+# Dev-only dirs — not needed at runtime
+tests/
+archive/
+data/
+Evals/
+docs/
+config/

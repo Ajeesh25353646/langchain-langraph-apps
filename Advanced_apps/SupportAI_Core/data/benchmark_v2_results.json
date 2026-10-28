@@ -1,0 +1,22 @@
+[
+  {
+    "query": "My phone battery dies within 2 hours of charging, what shoul",
+    "total_s": 29.07,
+    "intent": "technical_issue"
+  },
+  {
+    "query": "I want to return a product I bought 45 days ago",
+    "total_s": 4.17,
+    "intent": "refund"
+  },
+  {
+    "query": "How do I reset my account password?",
+    "total_s": 11.19,
+    "intent": "technical_issue"
+  },
+  {
+    "query": "I was charged twice for the same order, can you help?",
+    "total_s": 15.11,
+    "intent": "technical_issue"
+  }
+]

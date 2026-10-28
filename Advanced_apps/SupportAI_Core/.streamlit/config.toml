@@ -1,0 +1,14 @@
+[theme]
+# Warm amber/copper theme — professional and premium
+primaryColor = "#D4874A"
+backgroundColor = "#F8F4F0"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1E1E1E"
+font = "sans-serif"
+
+[server]
+maxUploadSize = 5
+maxMessageSize = 200
+
+[browser]
+gatherUsageStats = false

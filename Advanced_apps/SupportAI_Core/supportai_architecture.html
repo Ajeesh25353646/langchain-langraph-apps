@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SupportAI Core - System Architecture</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+    .hero {
+      background: linear-gradient(180deg, #0f172a 0%, #1a2332 100%);
+      border-bottom: 1px solid #334155;
+      padding: 48px 0 32px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .hero .subtitle {
+      color: #94a3b8;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+    }
+    .hero .badge-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .badge {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      color: #94a3b8;
+    }
+    .badge.blue { border-color: #3b82f6; color: #60a5fa; }
+    .badge.green { border-color: #22c55e; color: #4ade80; }
+    .badge.purple { border-color: #8b5cf6; color: #a78bfa; }
+    .badge.amber { border-color: #f59e0b; color: #fbbf24; }
+
+    .section {
+      padding: 40px 0;
+      border-bottom: 1px solid #1e293b;
+    }
+    .section:last-of-type { border-bottom: none; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .section-header .icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+    .section-header .icon.blue { background: rgba(59,130,246,0.15); }
+    .section-header .icon.green { background: rgba(34,197,94,0.15); }
+    .section-header .icon.purple { background: rgba(139,92,246,0.15); }
+    .section-header .icon.amber { background: rgba(245,158,11,0.15); }
+    .section-header .icon.red { background: rgba(239,68,68,0.15); }
+    .section-header .icon.cyan { background: rgba(6,182,212,0.15); }
+
+    .section-header h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: #f1f5f9;
+    }
+    .section-header .tag {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 2px 8px;
+      font-size: 0.7rem;
+      color: #64748b;
+      margin-left: auto;
+    }
+
+    .mermaid-wrap {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .split-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .split-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+    .split-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 900px) {
+      .split-2, .split-3, .split-4 { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 8px;
+    }
+    .card p, .card li {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .card ul { padding-left: 16px; }
+    .card li { margin-bottom: 4px; }
+    .card.code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      line-height: 1.5;
+    }
+    .card .label {
+      display: inline-block;
+      background: rgba(59,130,246,0.12);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 4px;
+      padding: 1px 8px;
+      font-size: 0.7rem;
+      color: #60a5fa;
+      font-family: 'JetBrains Mono', monospace;
+      margin-right: 4px;
+    }
+    .card .label.green { background: rgba(34,197,94,0.12); border-color: rgba(34,197,94,0.3); color: #4ade80; }
+    .card .label.amber { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.3); color: #fbbf24; }
+    .card .label.red { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: #f87171; }
+    .card .label.purple { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.3); color: #a78bfa; }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .stat-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+    .stat-card .num {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #60a5fa;
+    }
+    .stat-card .num.green { color: #4ade80; }
+    .stat-card .num.amber { color: #fbbf24; }
+    .stat-card .num.purple { color: #a78bfa; }
+    .stat-card .num.red { color: #f87171; }
+    .stat-card .num.cyan { color: #22d3ee; }
+    .stat-card .label {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 4px;
+    }
+    .stat-card .sub {
+      font-size: 0.65rem;
+      color: #475569;
+      margin-top: 2px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 24px;
+      border-top: 1px solid #1e293b;
+      color: #475569;
+      font-size: 0.75rem;
+    }
+    .footer a { color: #60a5fa; text-decoration: none; }
+
+    .file-path {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.75rem;
+      color: #64748b;
+      background: #0f172a;
+      border-radius: 4px;
+      padding: 1px 6px;
+    }
+
+    .cli-block {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 12px;
+      margin-top: 8px;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      line-height: 1.6;
+      color: #94a3b8;
+    }
+    .cli-block .comment { color: #60a5fa; }
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <div class="container">
+      <h1>SupportAI Core</h1>
+      <p class="subtitle">Multi-Agent Customer Support Platform - Production Architecture</p>
+      <div class="badge-row">
+        <span class="badge blue">LangGraph 1.2.2</span>
+        <span class="badge green">DeepSeek V4 Flash</span>
+        <span class="badge purple">Pinecone Serverless</span>
+        <span class="badge amber">Presidio PII</span>
+        <span class="badge">9 Agent Nodes</span>
+        <span class="badge">640 Guardrail Tests</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- ============================================================ -->
+    <!-- SECTION 1: System Architecture (Big Picture) -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon blue">&#9670;</div>
+        <h2>System Architecture - Big Picture</h2>
+        <span class="tag">3-Layer Design</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#3b82f6', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph TD
+    subgraph Layer1["Layer 1: Security and Privacy (Guardrail + PII)"]
+        G["Guardrail Node - regex + presidio + unicode"]
+        PIINode["PII Masking Node - Presidio Anonymizer"]
+        SG["10 regex patterns / 6 variant decoders / JSON schema scanner"]
+    end
+
+    subgraph Layer2["Layer 2: Agent Orchestration (LangGraph)"]
+        TRIAGE["Triage Node - DeepSeek V4 Flash Structured Output"]
+        TECH["Technical Node - RAG + Context + LLM"]
+        INQ["Inquiry Node - RAG + Context + LLM"]
+        ESC["Escalation Node - Policy + HITL"]
+        OFF["Off-Topic Node - Static Reply"]
+        SUM["Summarization Node - Prune at 8 messages"]
+        HUMAN["Human Review Node - LangGraph Interrupt"]
+        RESP["Response Node - Streaming + Feedback"]
+    end
+
+    subgraph Layer3["Layer 3: Data and Persistence"]
+        KB[("kb.json - 1,137 QA pairs")]
+        PV[("Pinecone Serverless - 768-dim, cosine")]
+        RR["FlashRank Reranker - top-10 to top-3"]
+        SQL[("SQLite DB - relational logs")]
+        JL[("JSONL Archive - fine-tuning ready")]
+        LS[("LangSmith - tracing + eval")]
+    end
+
+    U["User Input"] --> G
+    G -- Safe --> PIINode
+    G -- Blocked --> RESP
+    PIINode --> SUM
+    SUM --> TRIAGE
+
+    TRIAGE -- Refund --> ESC
+    TRIAGE -- Technical --> TECH
+    TRIAGE -- Inquiry --> INQ
+    TRIAGE -- Off-Topic --> OFF
+
+    ESC -- Policy Check --> HUMAN
+    HUMAN -- Approve --> RESP
+    TECH --> RESP
+    INQ --> RESP
+    OFF --> RESP
+
+    KB -.->|seed| PV
+    PV -.->|top-10| RR
+    RR -.->|top-3| TECH
+    RR -.->|top-3| INQ
+    RESP -.-> SQL
+    RESP -.-> JL
+    RESP -.-> LS
+    TRIAGE -.-> LS
+</div>
+      </div>
+
+      <div class="split-3">
+        <div class="card">
+          <h3>Security Layer</h3>
+          <p>The Guardrail node (<span class="file-path">main.py:221</span>) enforces input safety with 10 regex injection patterns, Presidio URL detection, 6 encoding variant decoders (base64, hex, binary, leet-speak), and a JSON schema scanner. The PII node (<span class="file-path">main.py:425</span>) uses Presidio + SpaCy to mask PERSON, PHONE, EMAIL, and CREDIT_CARD before data reaches any agent.</p>
+        </div>
+        <div class="card">
+          <h3>Orchestration Layer</h3>
+          <p><span class="label">9 nodes</span> built with LangGraph <span class="file-path">main.py:882-943</span>. A Triage agent (DeepSeek V4 Flash via OpenCode Zen) routes to 4 specialist nodes: Technical (RAG-augmented), Inquiry (RAG-augmented), Escalation (policy-engine + HITL), and Off-Topic. Summarization auto-triggers after 8 messages.</p>
+        </div>
+        <div class="card">
+          <h3>Data Layer</h3>
+          <p>RAG pipeline: <span class="file-path">kb.json</span> (1,137 QA pairs from Bitext dataset) seeded into Pinecone Serverless (768-dim, cosine). Base retriever fetches top-10, FlashRank reranker <span class="file-path">main.py:373</span> re-scores to top-3 using <span class="label green">ms-marco-MiniLM-L-12-v2</span>. Dual persistence via SQLite + JSONL for dashboard + fine-tuning.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 2: LangGraph Execution Flow -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon green">&#9654;</div>
+        <h2>LangGraph Execution Pipeline</h2>
+        <span class="tag">State Machine</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#22c55e', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph LR
+    START([START]) --> G["guardrail - 0.1s CPU"]
+    G -- Blocked --> RESP["respond - LLM + UI"]
+    G -- Safe --> PII["pii_detection - 0.1s CPU"]
+    PII --> SUM["summarize - LLM (if 8+ msgs)"]
+    SUM --> TRIAGE["triage - 4.3-5.9s LLM"]
+    TRIAGE -- Technical --> TECH["technical - RAG + LLM 0.8-1.1s"]
+    TRIAGE -- Inquiry --> INQ["inquiry - RAG + LLM 0.8-1.1s"]
+    TRIAGE -- Refund --> ESC["escalation - Policy check"]
+    TRIAGE -- Off-Topic --> OFF["off_topic - Static reply"]
+    ESC --> HUMAN["human_review - HITL Interrupt"]
+    HUMAN --> RESP
+    TECH --> RESP
+    INQ --> RESP
+    OFF --> RESP
+    RESP --> END([END])
+</div>
+      </div>
+
+      <div class="split-2">
+        <div class="card">
+          <h3>State Architecture</h3>
+          <p><span class="file-path">main.py:224-241</span> - The <span class="label">SupportState</span> TypedDict carries 17 fields through every node: <span class="label">messages</span> (add_messages reducer), <span class="label">customer_id</span>, <span class="label">ticket_id</span>, <span class="label">intent</span>, <span class="label">priority</span>, <span class="label">sentiment</span>, <span class="label">refund_amount</span>, <span class="label">issue_description</span>, <span class="label">resolution</span>, <span class="label">requires_human_approval</span>, <span class="label">is_approved</span>, <span class="label">is_blocked</span>, <span class="label">escalation_notes</span>, <span class="label">summary</span>, <span class="label">user_rating</span>, <span class="label">user_feedback</span>, <span class="label">supervisor_notes</span>. Checkpointer uses <span class="label green">MemorySaver</span> for in-memory persistence.</p>
+        </div>
+        <div class="card">
+          <h3>Routing Logic</h3>
+          <p><span class="file-path">main.py:861-879</span> - Two conditional routers:</p>
+          <ul>
+            <li><span class="label">route_from_guardrail</span> - blocked goes to respond, safe goes to pii_detection</li>
+            <li><span class="label">route_from_triage</span> - refund to escalation, technical to technical, inquiry to inquiry, off_topic to off_topic</li>
+          </ul>
+          <p>Escalation routes to Human Review which uses LangGraph's built-in <span class="label amber">interrupt()</span> pattern for HITL gating. The <span class="file-path">streamlit_app.py:296-297</span> also allows manual override from the UI.</p>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="num">~29.1s</div>
+          <div class="label">Cold Start</div>
+          <div class="sub">43% faster than v1</div>
+        </div>
+        <div class="stat-card">
+          <div class="num green">~7.9s</div>
+          <div class="label">Warm Technical</div>
+          <div class="sub">75% faster than v1</div>
+        </div>
+        <div class="stat-card">
+          <div class="num amber">~4.2s</div>
+          <div class="label">Warm Refund</div>
+          <div class="sub">Simpler path</div>
+        </div>
+        <div class="stat-card">
+          <div class="num purple">6</div>
+          <div class="label">Max Retries</div>
+          <div class="sub">LLM rate-limit resilience</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 3: RAG Pipeline Deep-Dive -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon purple">&#9632;</div>
+        <h2>Advanced RAG Pipeline with Cross-Encoder Reranking</h2>
+        <span class="tag">Retrieval</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#8b5cf6', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph TD
+    KB[(kb.json - 1,137 QA pairs)] --> EMB["BAAI/bge-base-en-v1.5 768-dim embeddings CPU"]
+    EMB --> PV[(Pinecone Serverless - us-east-1 cosine metric)]
+
+    Q["User Query as issue_description"] --> QEMB["Qwen3 Embedding 0.6B"]
+    QEMB --> PV
+
+    PV -->|top-10| RR["FlashRank Reranker ms-marco-MiniLM-L-12-v2"]
+    RR -->|top-3| AGENT["Agent LLM DeepSeek V4 Flash"]
+
+    subgraph Optimizations["Performance Optimizations"]
+        S1["Singleton LLM via _LLM_INSTANCE"]
+        S2["Pinecone Cache via sentinel file"]
+        S3["Eager Warmup via background thread"]
+    end
+</div>
+      </div>
+
+      <div class="split-4">
+        <div class="card">
+          <h3>Embedding Pipeline</h3>
+          <p>Uses <span class="label">BAAI/bge-base-en-v1.5</span> on CPU producing 768-dim vectors with cosine similarity. Encodes all 1,137 KB documents. The embedding model runs locally via <span class="file-path">main.py:282-293</span> with a custom wrapper around <span class="file-path">sentence_transformers</span>.</p>
+        </div>
+        <div class="card">
+          <h3>Vector Store</h3>
+          <p>Pinecone Serverless index (<span class="label green">support-kb</span>) in AWS us-east-1. Batch population at 50 docs/chunk with 60s rate-limit backoff. Features a sentinel cache (<span class="file-path">/tmp/.supportai_pinecone_cache</span>) that skips <span class="label amber">list_indexes()</span> API call on restarts, saving about 2s.</p>
+        </div>
+        <div class="card">
+          <h3>Cross-Encoder Reranker</h3>
+          <p><span class="file-path">main.py:371-373</span> - FlashRank with <span class="label purple">ms-marco-MiniLM-L-12-v2</span>. Takes top-10 from Pinecone, re-scores with a full cross-encoder pass, returns only top-3. This eliminates retrieval noise and reduces hallucination risk.</p>
+        </div>
+        <div class="card">
+          <h3>Performance Tricks</h3>
+          <ul>
+            <li><span class="label">Singleton LLM</span> - module-level <span class="label green">_LLM_INSTANCE</span> avoids ChatOpenAI create overhead</li>
+            <li><span class="label">Eager Warmup</span> - background daemon thread pre-loads embeddings + Pinecone</li>
+            <li><span class="label">Lazy Retriever</span> - thread-safe double-checked locking</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 4: Security and Guardrails -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon red">&#9670;</div>
+        <h2>Multi-Layer Security and Guardrail Architecture</h2>
+        <span class="tag">2-Layer Defense</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#ef4444', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph LR
+    subgraph Layer1G["Layer 1: Deterministic Guardrail"]
+        U["User Input"] --> NFKC["Unicode Normalization NFKC + invisible chars"]
+        NFKC --> TAG["Tag Escaping - USER_INPUT tag redacted"]
+        TAG --> URL["Presidio URL Detection + Private IP Regex"]
+        URL --> REGEX["Regex Patterns - 10 injection patterns"]
+        REGEX --> VARIANTS["Variant Decoders - base64 hex binary leet spaced"]
+        VARIANTS --> MAL["Malicious Keywords - 15 blacklisted terms"]
+        MAL --> JSON_SCAN["JSON Schema Scanner - role system instruction keys"]
+        JSON_SCAN --> DECIDE{"Block?"}
+        DECIDE -- Yes --> RESP["Respond with default error"]
+        DECIDE -- No --> LAYER2
+    end
+
+    subgraph Layer2G["Layer 2: Prompt-Based Defense"]
+        LAYER2["USER_INPUT XML Tags + System Policy"] --> WRAP
+        WRAP["All messages wrapped in DATA-ONLY tags"] --> REFUSE["Agent refuses instructions in data tags"]
+        REFUSE --> AGENT_OUT["Safe Agent Response"]
+    end
+
+    subgraph Evaluation["Evaluation Results"]
+        D1["640 total tests (570 attack + 70 benign)"]
+        D2["251 blocked (44%) with 0% False Positive Rate"]
+        D3["319 passed attacks yields 100% agent refusal"]
+        D4["Combined defense: 100% effectiveness"]
+    end
+
+    AGENT_OUT --> D1
+</div>
+      </div>
+
+      <div class="split-2">
+        <div class="card">
+          <h3>Layer 1: Deterministic Guardrail</h3>
+          <p><span class="file-path">main.py:56-217</span> - The <span class="label">Guardrail</span> class handles:</p>
+          <ul>
+            <li><span class="label">10 regex patterns</span> for injection detection (ignore-prior, roleplay, system prompt reveal, etc.)</li>
+            <li><span class="label">6 variant decoders</span> - NFKC normalization, base64, hex, binary, leet-speak, spaced-out text</li>
+            <li><span class="label red">15 keyword blacklist</span> - DAN, jailbreak, do anything now, etc.</li>
+            <li><span class="label">JSON schema scanner</span> - blocks role/system/instruction keys in JSON payloads</li>
+            <li>Presidio URL detection + private IP regex</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Layer 2: Prompt-Based Defense</h3>
+          <p><span class="file-path">main.py:462-475</span> - Every user message is wrapped in <span class="label green">USER_INPUT</span> XML tags. The SYSTEM_POLICY instructs the LLM to treat all content within those tags as <span class="label amber">DATA ONLY</span>. This creates a strict instruction-data separation boundary that prevents the model from following instructions embedded in user messages.</p>
+          <p>Combined effectiveness: <strong>100%</strong> across 640 tests.</p>
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="num">640</div>
+          <div class="label">Total Guardrail Tests</div>
+          <div class="sub">570 attack + 70 benign</div>
+        </div>
+        <div class="stat-card">
+          <div class="num green">44%</div>
+          <div class="label">Deterministic Block</div>
+          <div class="sub">251 of 570 attacks caught</div>
+        </div>
+        <div class="stat-card">
+          <div class="num amber">0%</div>
+          <div class="label">False Positive Rate</div>
+          <div class="sub">0 blocks on 70 benign</div>
+        </div>
+        <div class="stat-card">
+          <div class="num purple">100%</div>
+          <div class="label">Combined Defense</div>
+          <div class="sub">Agent refused all 319 remaining</div>
+        </div>
+      </div>
+
+      <div class="split-4">
+        <div class="card code">
+          <span class="label">url_injection</span> 100% blocked<br>
+          <span class="label amber">json_schema</span> 93% blocked<br>
+          <span class="label">system_prompt_leak</span> 59% blocked<br>
+          <span class="label">multi_turn_drift</span> 46% blocked
+        </div>
+        <div class="card code">
+          <span class="label">indirect_injection</span> 39% blocked<br>
+          <span class="label">encoded_attack</span> 32% blocked<br>
+          <span class="label">direct_injection</span> 28% blocked<br>
+          <span class="label">social_engineering</span> 26% blocked
+        </div>
+        <div class="card code">
+          <span class="label">jailbreak</span> 19% blocked<br>
+          <span class="label">role_hijack</span> 14% blocked<br>
+          <span class="label">unicode_homoglyph</span> 4% blocked<br>
+          <span class="label amber">All 319 passed: 100% refused by agent</span>
+        </div>
+        <div class="card">
+          <h3>10 Attack Categories</h3>
+          <p>Attacks sourced from <span class="file-path">Gyr0ghost/promptwall-injection-dataset</span> + programmatic generation. Covers all OWASP LLM01 categories: direct injection, jailbreak, encoded attack, homoglyph, URL injection, JSON schema injection, role hijack, multi-turn drift, indirect injection, and system prompt leak.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 5: PII and Privacy Compliance -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon cyan">&#9670;</div>
+        <h2>PII Anonymization and Privacy Compliance</h2>
+        <span class="tag">DPDP Act 2023</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#22d3ee', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph LR
+    subgraph Input["Before PII Masking"]
+        RAW["Raw Input: Name, Phone, Email, Credit Card"]
+    end
+
+    subgraph Detection["Presidio NER + SpaCy"]
+        P["PERSON detected"]
+        PH["PHONE_NUMBER detected"]
+        E["EMAIL_ADDRESS detected"]
+        CC["CREDIT_CARD detected"]
+    end
+
+    subgraph Masking["Anonymizer Operators"]
+        P_REP["PERSON becomes [NAME]"]
+        PH_MASK["PHONE becomes ******3210"]
+        E_MASK["EMAIL becomes j****@email.com"]
+        CC_MASK["CC becomes ************1111"]
+    end
+
+    subgraph After["After PII Masking"]
+        ANON["Anonymized Input"]
+    end
+
+    subgraph Wrap["Tag Wrapping"]
+        WRAPPED["USER_INPUT / content / tags"]
+    end
+
+    RAW --> P
+    RAW --> PH
+    RAW --> E
+    RAW --> CC
+    P --> P_REP
+    PH --> PH_MASK
+    E --> E_MASK
+    CC --> CC_MASK
+    P_REP --> ANON
+    PH_MASK --> ANON
+    E_MASK --> ANON
+    CC_MASK --> ANON
+    ANON --> WRAPPED
+    WRAPPED --> LLM_AGENTS["All Agent Nodes receive anonymized data"]
+</div>
+      </div>
+
+      <div class="split-2">
+        <div class="card">
+          <h3>Privacy by Design</h3>
+          <p><span class="file-path">main.py:425-460</span> - The PII node runs <span class="label">Microsoft Presidio Analyzer</span> with <span class="label">SpaCy en_core_web_lg</span> to detect 4 entity types. Anonymizer operators apply specific masking per entity type: PERSON replaced with <span class="label green">[NAME]</span>, PHONE/EMAIL masked from end, CREDIT_CARD masked from start. Raw data never reaches LLM agents.</p>
+        </div>
+        <div class="card">
+          <h3>Compliance Framework</h3>
+          <p>Designed for India's <span class="label amber">DPDP Act 2023</span> and EU Privacy Acts. Zero-leakage architecture ensures all persisted logs (SQLite + JSONL) are inherently anonymized. Anonymized data means the feedback + fine-tuning datasets are GDPR/DPDP compliant by construction.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 6: Feedback Loops and Evaluation -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon amber">&#9670;</div>
+        <h2>Feedback Loops, Observability and Quality Evaluation</h2>
+        <span class="tag">Dual Feedback</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#f59e0b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph TD
+    subgraph Feedback["Feedback Collection"]
+        CUST["Customer Portal - Thumbs Up / Thumbs Down"]
+        SUP["Supervisor Dashboard - Internal Notes and Review"]
+    end
+
+    subgraph Persistence["Dual Persistence"]
+        SQL[("SQLite DB - support_logs.db")]
+        JL[("JSONL Archive - ticket_logs.jsonl")]
+    end
+
+    subgraph LangSmithLS["LangSmith"]
+        TRACE["Traces - every node execution"]
+        EVAL["Evaluation - LLM-as-a-Judge"]
+    end
+
+    subgraph EvalResults["Quality Metrics"]
+        Q1["81.4% Correctness over 50 test instances"]
+        Q2["92.2% Relevance via LLM-as-a-Judge"]
+        Q3["100% Intent Accuracy via DeepSeek V4 Flash judge"]
+    end
+
+    CUST -->|save_ticket_log| SQL
+    CUST -->|save_ticket_log| JL
+    SUP -->|update_state| SQL
+    SUP -->|update_state| JL
+    CUST -.-> TRACE
+    SUP -.-> TRACE
+    TRACE -.-> EVAL
+    EVAL --> Q1
+    EVAL --> Q2
+    EVAL --> Q3
+</div>
+      </div>
+
+      <div class="split-2">
+        <div class="card">
+          <h3>Dual Feedback Collection</h3>
+          <p><span class="file-path">streamlit_app.py:255-285</span> - Two feedback channels:</p>
+          <ul>
+            <li><span class="label">Customer Portal</span> - Thumbs Up/Down after resolution, with optional free-text for negative feedback. Stored via <span class="file-path">logger.py:33-98</span>.</li>
+            <li><span class="label">Supervisor Dashboard</span> - Internal notes field for agent operators to rate AI performance and add context. Saved via <span class="file-path">app.update_state()</span>.</li>
+          </ul>
+          <p>All logged to both SQLite (dashboard queries) and JSONL (fine-tuning datasets).</p>
+        </div>
+        <div class="card">
+          <h3>LangSmith Observability</h3>
+          <p>Every graph execution is traced to LangSmith for debugging and evaluation. The evaluation suite uses <span class="label purple">DeepSeek V4 Flash as Judge</span> scoring Gemma 4 31B agent outputs across 50 test instances:</p>
+          <ul>
+            <li><span class="label green">81.4% correctness</span> - factual accuracy of responses</li>
+            <li><span class="label green">92.2% relevance</span> - answer stays on topic</li>
+            <li><span class="label green">100% intent accuracy</span> - correct routing classification</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 7: Dual-View UI -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon blue">&#9670;</div>
+        <h2>Streamlit Dual-View UI</h2>
+        <span class="tag">Customer + Supervisor</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#3b82f6', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph TD
+    subgraph App["Streamlit App (streamlit_app.py)"]
+        SIDEBAR["Sidebar - View Mode Switch / Ticket ID Display / Reset Chat Button"]
+
+        subgraph CP["Customer Portal"]
+            C1["Chat Interface - token-by-token streaming"]
+            C2["Status Bar - node-level progress"]
+            C3["Resolution Card - Thumbs Up/Down + Feedback"]
+            C4["Manual Escalation - after 4 turns (8 msgs)"]
+            C5["Mark as Resolved - after 2 exchanges"]
+        end
+
+        subgraph ED["Executive Dashboard"]
+            D1["Live Transcript - scrollable chat history"]
+            D2["Insights Panel - Intent, Sentiment, Priority, Value"]
+            D3["Supervisor Notes - text area for internal eval"]
+            D4["HITL Approval - Approve/Reject with comment"]
+            D5["Raw State Viewer - full JSON state dump"]
+        end
+    end
+
+    CP -->|stream mode| GRAPH["LangGraph app.stream(updates + messages)"]
+    ED -->|get_state + update_state| GRAPH
+    GRAPH -->|chunks| C1
+    GRAPH -->|node names| C2
+    GRAPH -->|interrupt| D4
+
+    SIDEBAR --> CP
+    SIDEBAR --> ED
+</div>
+      </div>
+
+      <div class="split-2">
+        <div class="card">
+          <h3>Customer Portal</h3>
+          <p><span class="file-path">streamlit_app.py:233-363</span> - Features token-level streaming with a typing cursor, node-level status bar showing pipeline progress (guardrail to triage to search to response), automatic escalation offer after 8 messages (4 turns), Mark as Resolved button, and post-resolution feedback collection with thumbs up/down.</p>
+        </div>
+        <div class="card">
+          <h3>Executive Dashboard</h3>
+          <p><span class="file-path">streamlit_app.py:367-437</span> - Live transcript viewer with real-time agent state updates. Insight panel shows <span class="label">Intent</span>, <span class="label">Sentiment</span>, <span class="label">Priority</span>, and <span class="label">Refund Value</span> metrics. Supports HITL approval workflow for escalations with Approve/Reject buttons and supervisor notes for internal evaluation. Raw state dump available in expander.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 8: Infrastructure and Deployment -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon green">&#9654;</div>
+        <h2>Infrastructure and Deployment</h2>
+        <span class="tag">Azure + Docker</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#22c55e', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph TD
+    subgraph Azure["Azure Container Apps"]
+        ACA["Container App supportai-core Consumption Plan"]
+        RG["Resource Group supportai-core-prod-rg"]
+        CAE["Container Apps Environment scale-to-zero"]
+        LAW["Log Analytics Workspace"]
+    end
+
+    subgraph Build["Docker Build"]
+        DF["Dockerfile python:3.10-slim"]
+        REQ["requirements.txt 14 packages"]
+        SPA["SpaCy Model en_core_web_lg pre-downloaded"]
+        ST["SentenceTransformer BAAI/bge-base-en-v1.5 pre-cached"]
+    end
+
+    subgraph Config["Configuration"]
+        AZ["azure.yaml azd-init template"]
+        ENV[".env API keys"]
+        MOD["config/models.yaml 6 judge models"]
+        KB["kb.json 1,137 QA pairs"]
+    end
+
+    subgraph External["External Services"]
+        DS["OpenCode Zen API DeepSeek V4 Flash"]
+        PC["Pinecone Serverless vector DB"]
+    end
+
+    DF --> ACA
+    REQ --> DF
+    AZ --> ACA
+    ACA --> DS
+    ACA --> PC
+    RG --> CAE --> ACA
+    LAW --> CAE
+    SPA --> DF
+    ST --> DF
+</div>
+      </div>
+
+      <div class="split-3">
+        <div class="card">
+          <h3>Docker Build</h3>
+          <p><span class="file-path">Dockerfile</span> - Based on <span class="label">python:3.10-slim</span>. Pre-downloads SpaCy model and BGE embeddings to avoid runtime downloads. Creates non-root user (UID 1000). Health check via Streamlit's <span class="label amber">_stcore/health</span> endpoint every 30s. Exposes port 8501.</p>
+        </div>
+        <div class="card">
+          <h3>Azure Deployment</h3>
+          <p><span class="file-path">azure.yaml</span> + <span class="file-path">infra/main.bicep</span> - <span class="label">azd-init</span> template targeting Container Apps (consumption plan = scale-to-zero). Southeast Asia region. Includes Log Analytics workspace and Container Apps Environment. Standardized resource naming with unique token.</p>
+        </div>
+        <div class="card">
+          <h3>Judge Model Registry</h3>
+          <p><span class="file-path">config/models.yaml</span> - 6 judge models configured across 3 providers:</p>
+          <ul>
+            <li><span class="label">NVIDIA</span> - Nemotron-3 Content Safety, Gemma 4, DeepSeek V4 Flash, GLM-5.1, Nemotron-3 Super</li>
+            <li><span class="label">Google</span> - Gemma 4 31B</li>
+            <li><span class="label">OpenRouter</span> - GPT-OSS-120B</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 9: Performance Evolution -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon amber">&#9670;</div>
+        <h2>Performance Evolution: v1 to v2</h2>
+        <span class="tag">Latency Optimization</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#f59e0b', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph LR
+    V1["v1: Gemma 4 31B Google AI Studio Cold 51.5s Warm 31s"] -->|43% faster cold| V2["v2: DeepSeek V4 Flash OpenCode Zen API Cold 29.1s Warm Tech 7.9s Warm Refund 4.2s"]
+
+    subgraph OptimizationsList["5 Key Optimizations Applied"]
+        O1["1. Model Swap - Gemma to DeepSeek - 60% per-call latency reduction"]
+        O2["2. Singleton LLM - _LLM_INSTANCE - eliminates ChatOpenAI creation"]
+        O3["3. Pinecone Cache - sentinel file - skips list_indexes() on restart"]
+        O4["4. Eager Warmup - background daemon thread - pre-loads retriever at startup"]
+        O5["5. Token Streaming UI - node progress + token streaming"]
+    end
+
+    V2 --> O1
+    V2 --> O2
+    V2 --> O3
+    V2 --> O4
+    V2 --> O5
+</div>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="num red">~51.5s</div>
+          <div class="label">v1 Cold Start</div>
+          <div class="sub">Gemma 4 31B</div>
+        </div>
+        <div class="stat-card">
+          <div class="num green">~29.1s</div>
+          <div class="label">v2 Cold Start</div>
+          <div class="sub">DeepSeek V4 Flash</div>
+        </div>
+        <div class="stat-card">
+          <div class="num amber">~31s</div>
+          <div class="label">v1 Warm Technical</div>
+          <div class="sub">estimated</div>
+        </div>
+        <div class="stat-card">
+          <div class="num green">~7.9s</div>
+          <div class="label">v2 Warm Technical</div>
+          <div class="sub">75% faster</div>
+        </div>
+      </div>
+
+      <div class="split-2">
+        <div class="card">
+          <h3>DeepSeek V4 Flash Benchmark</h3>
+          <p><span class="file-path">data/deepseek_judge_benchmark.json</span> - 8 configurations tested across concurrency levels 1-8:</p>
+          <ul>
+            <li>Avg latency (concurrency=8): <span class="label green">9.3s</span></li>
+            <li>Min latency: <span class="label green">1.46s</span>, Max: 31.77s</li>
+            <li>Throughput at concurrency 8: <span class="label amber">18.9 req/min</span></li>
+            <li>Avg TTFB: <span class="label">4.12s</span></li>
+            <li><span class="label green">Output valid: 100%</span> - structural compliance</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Per-Query Phase Breakdown (warm technical)</h3>
+          <ul>
+            <li><span class="label">Guardrail</span> - ~0.1s (Presidio + regex, CPU)</li>
+            <li><span class="label">PII Detection</span> - ~0.1s (Presidio NER, CPU)</li>
+            <li><span class="label red">Triage LLM</span> - 4.3-5.9s (OpenCode Zen API, bottleneck)</li>
+            <li><span class="label">RAG + Rerank</span> - 1.7-2.0s (Qwen3 embed + Pinecone + FlashRank)</li>
+            <li><span class="label green">Agent Response</span> - 0.8-1.1s (small context)</li>
+            <li><strong>Total</strong>: 6.8-9.0s</li>
+          </ul>
+          <p>Hardware: RTX 4090 (Qwen3 on CUDA), Intel i9, India to US API.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SECTION 10: How to Run -->
+    <!-- ============================================================ -->
+    <div class="section">
+      <div class="section-header">
+        <div class="icon purple">&#9670;</div>
+        <h2>Running the System</h2>
+        <span class="tag">CLI Reference</span>
+      </div>
+
+      <div class="mermaid-wrap">
+        <div class="mermaid">
+%%{init: {'theme': 'base', 'themeVariables': { 'background': '#0f172a', 'primaryColor': '#1e293b', 'primaryTextColor': '#e2e8f0', 'primaryBorderColor': '#334155', 'lineColor': '#8b5cf6', 'secondaryColor': '#0f172a', 'tertiaryColor': '#1e293b', 'fontSize': '12px' }}}%%
+graph TD
+    subgraph Setup["Setup"]
+        S1["pip install -r requirements.txt"]
+        S2["python -m spacy download en_core_web_lg"]
+        S3["cp .env.example .env and fill API keys"]
+    end
+
+    subgraph Run["Run Application"]
+        R1["streamlit run streamlit_app.py opens Customer Portal + Dashboard"]
+    end
+
+    subgraph EvalSuite["Evaluation Suite"]
+        E1["python -m tests.test_guardrails 640 attack tests (10 categories)"]
+        E2["python tests/evaluate_benign_fpr.py 70 benign queries - 0% FPR"]
+        E3["python tests/evaluate_guardrail_gaps.py --workers 3 319 attacks - agent refusal check"]
+        E4["python tests/evaluate_quality.py 50 instances - LLM-as-a-Judge scoring"]
+        E5["python tests/benchmark_latency.py v1 vs v2 latency comparison"]
+    end
+
+    subgraph Deploy["Deploy"]
+        D1["docker build -t supportai-core ."]
+        D2["azd up to Azure Container Apps"]
+    end
+
+    S1 --> R1
+    S2 --> R1
+    S3 --> R1
+    R1 -.-> EvalSuite
+    S1 --> E1
+    S1 --> EvalSuite
+    D1 --> D2
+</div>
+      </div>
+
+      <div class="card">
+        <h3>Quick Start</h3>
+        <div class="cli-block">
+          <span class="comment"># Prerequisites:</span><br>
+          pip install -r requirements.txt<br>
+          python -m spacy download en_core_web_lg<br><br>
+          <span class="comment"># Set API keys in .env:</span><br>
+          # ZEN_API_KEY=your_key<br>
+          # PINECONE_API_KEY=your_key<br><br>
+          <span class="comment"># Run the app:</span><br>
+          streamlit run streamlit_app.py
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    SupportAI Core - Architecture Visual Document<br>
+    Generated from codebase at <span style="color:#60a5fa;">/root/langchain-langgraph-apps/Advanced_apps/SupportAI_Core</span><br>
+    9 LangGraph Nodes | 640 Guardrail Tests | 1,137 KB Entries | DeepSeek V4 Flash
+  </div>
+
+  <script>
+    mermaid.initialize({
+      theme: 'dark',
+      themeVariables: {
+        darkMode: true,
+        background: '#0f172a',
+        primaryColor: '#1e293b',
+        primaryTextColor: '#e2e8f0',
+        primaryBorderColor: '#334155',
+        lineColor: '#3b82f6',
+        secondaryColor: '#0f172a',
+        tertiaryColor: '#1e293b',
+        fontSize: '13px'
+      },
+      flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+      securityLevel: 'loose'
+    });
+  </script>
+</body>
+</html>
