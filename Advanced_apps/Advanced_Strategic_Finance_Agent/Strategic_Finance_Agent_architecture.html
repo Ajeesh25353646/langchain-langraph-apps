@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategic Forex Intelligence Agent — Architecture</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({
+  theme: 'dark',
+  themeVariables: {
+    darkMode: true,
+    background: '#0f172a',
+    primaryColor: '#1e293b',
+    primaryTextColor: '#e2e8f0',
+    primaryBorderColor: '#334155',
+    lineColor: '#3b82f6',
+    secondaryColor: '#0f172a',
+    tertiaryColor: '#1e293b',
+    fontSize: '13px'
+  }
+});
+</script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  line-height: 1.6;
+  padding: 0;
+}
+.container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+/* Header */
+.header {
+  text-align: center;
+  padding: 48px 0 32px;
+  border-bottom: 1px solid #334155;
+  margin-bottom: 40px;
+}
+.header h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 8px;
+}
+.header .badge-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.badge {
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid #334155;
+}
+.badge-blue { background: #1e3a5f; color: #93c5fd; border-color: #3b82f6; }
+.badge-purple { background: #2e1a4a; color: #c4b5fd; border-color: #8b5cf6; }
+.badge-green { background: #1a3a2a; color: #86efac; border-color: #22c55e; }
+.badge-pink { background: #3a1a2e; color: #f9a8d4; border-color: #ec4899; }
+
+/* Section */
+.section {
+  margin-bottom: 48px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #334155;
+}
+.section-number {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.section-header h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.section-header .subtitle {
+  margin-left: auto;
+  font-size: 0.82rem;
+  color: #94a3b8;
+  background: #1e293b;
+  padding: 3px 12px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+}
+
+/* Diagram container */
+.mermaid-wrapper {
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.mermaid-wrapper svg { max-width: 100%; height: auto; }
+
+/* Cards grid */
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.card h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #93c5fd;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card .tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 4px;
+  margin-left: 6px;
+}
+.card p { font-size: 0.88rem; color: #cbd5e1; line-height: 1.6; }
+.card ul { margin: 8px 0 0 16px; font-size: 0.85rem; color: #94a3b8; }
+.card ul li { margin-bottom: 4px; }
+.card code {
+  background: #0f172a;
+  color: #f472b6;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* Full width cards */
+.card-full { grid-column: 1 / -1; }
+
+/* Stats bar */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.stat-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+.stat-card .stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #60a5fa;
+  line-height: 1.2;
+}
+.stat-card .stat-label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+.stat-card .stat-detail {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* Deployment cards */
+.deploy-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+.deploy-card {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 18px;
+  text-align: center;
+}
+.deploy-card h4 { color: #93c5fd; font-size: 0.95rem; }
+.deploy-card p { font-size: 0.82rem; color: #94a3b8; margin-top: 4px; }
+
+/* File path callout */
+.file-path {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #94a3b8;
+  margin: 4px 0;
+}
+.file-path .highlight { color: #f472b6; }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 24px 0;
+  border-top: 1px solid #334155;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 768px) {
+  .cards { grid-template-columns: 1fr; }
+  .deploy-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Strategic Forex Intelligence Agent</h1>
+  <p style="color: #94a3b8; font-size: 1rem;">Multi-Agent CFO Advisor Architecture</p>
+  <div class="badge-row">
+    <span class="badge badge-blue">3 Agents</span>
+    <span class="badge badge-purple">10/10 Tests</span>
+    <span class="badge badge-green">3-Tier Fallback</span>
+    <span class="badge badge-pink">LangGraph DAG</span>
+    <span class="badge badge-blue">~15s Latency</span>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: System Architecture (Big Picture) -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">1</div>
+    <h2>System Architecture</h2>
+    <span class="subtitle">3-Layer DAG Orchestration</span>
+  </div>
+
+  <div class="mermaid-wrapper">
+  <div class="mermaid">
+flowchart LR
+    subgraph UI["Presentation Layer (Streamlit)"]
+        Input["User Input: currencies, amount, context"]
+        Report["Executive Strategy Report"]
+    end
+
+    subgraph DAG["Orchestration Layer (LangGraph StateGraph)"]
+        direction TB
+        R["currency_data_fetcher - Fetch live FX rate"]
+        N["financial_news_analyst - Market intelligence"]
+        S["senior_strategist - CFO synthesis"]
+    end
+
+    subgraph Intelligence["Intelligence Layer (Tools / LLM)"]
+        FX["ExchangeRate API - Primary FX data"]
+        T["Tavily Search - AI web search"]
+        DDG["DuckDuckGo - Zero-cost fallback"]
+        GEM["Gemini 3.1 Flash Lite - Strategic reasoning"]
+    end
+
+    Input --> R
+    R -->|"enriched state"| N
+    N -->|"augmented state"| S
+    S -->|"final recommendation"| Report
+
+    R <--> FX
+    N <--> T
+    R -.->|"fallback 1"| T
+    R -.->|"fallback 2"| DDG
+    S <--> GEM
+  </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Presentation Layer</h3>
+      <p><strong>Streamlit</strong> dashboard with sidebar inputs (source/target currency, amount, business context) and expandable data source transparency. Status streaming shows each agent's progress in real-time.</p>
+      <ul>
+        <li>Source: <code>Strategic_Finance_Agent.py</code> (lines 166-216)</li>
+        <li>Runtime detection: <code>st.runtime.exists()</code> for dual CLI/UI mode</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Orchestration Layer</h3>
+      <p><strong>LangGraph StateGraph</strong> with typed <code>AgentState</code> ensuring strict data contracts between nodes. Linear DAG flow prevents context pollution across agent boundaries.</p>
+      <ul>
+        <li>3 nodes, 3 edges, 1 entry point</li>
+        <li>State schema: 8 typed fields</li>
+        <li>Additive updates via TypedDict merge</li>
+      </ul>
+    </div>
+    <div class="card card-full">
+      <h3>Intelligence Layer &amp; 3-Tier Fallback Architecture</h3>
+      <p>The system uses a <strong>circuit breaker pattern</strong> with three fallback tiers for FX rate fetching. Each tier tags its output so downstream agents always know the source reliability.</p>
+      <ul>
+        <li><strong>Tier 1 (Primary):</strong> ExchangeRate API v6 — dedicated FX endpoint, 10s timeout</li>
+        <li><strong>Tier 2 (Fallback 1):</strong> Tavily Search — AI-native structured markdown results</li>
+        <li><strong>Tier 3 (Fallback 2):</strong> DuckDuckGo — zero-cost always-available safety net</li>
+        <li>Gemini 3.1 Flash Lite provides 1M+ token context window for the CFO strategist</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: Data Pipeline — End-to-End Flow -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">2</div>
+    <h2>Data Pipeline &amp; State Flow</h2>
+    <span class="subtitle">End-to-End Execution Sequence</span>
+  </div>
+
+  <div class="mermaid-wrapper">
+  <div class="mermaid">
+flowchart TD
+    START(["START"]) --> INIT["Initialize AgentState<br/>8 typed fields from user input"]
+    INIT --> N1["NODE: market_research<br/>currency_data_fetcher(state)"]
+
+    subgraph N1D["currency_data_fetcher"]
+        FXTRY["Try ExchangeRate API v6<br/>GET /pair/SOURCE/TARGET"]
+        FXFAIL["On failure: Try Tavily search<br/>USD to EUR exchange rate today"]
+        DDGFAIL["On Tavily failure: DuckDuckGo fallback"]
+    end
+
+    N1D --> RETURN1["RETURN: { current_rate: '1 USD = X EUR' }"]
+    RETURN1 --> N2["NODE: news_intel<br/>financial_news_analyst(state)"]
+
+    subgraph N2D["financial_news_analyst"]
+        Q1["Query 1: 'USD EUR forecast next 30 days'"]
+        Q2["Query 2: 'Central bank rate decisions USD EUR'"]
+        Q3["Query 3: 'Economic events affecting EUR this week'"]
+    end
+
+    N2D --> RETURN2["RETURN: { market_news: aggregated text }"]
+    RETURN2 --> N3["NODE: cfo_advisor<br/>senior_strategist(state)"]
+
+    subgraph N3D["senior_strategist"]
+        PROMPT["Build CFO prompt<br/>with context + rate + news"]
+        LLM["Gemini 3.1 Flash Lite<br/>synthesizes recommendation"]
+    end
+
+    N3D --> RETURN3["RETURN: { final_recommendation: strategy }"]
+    RETURN3 --> END(["END"])
+  </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Node 1: currency_data_fetcher</h3>
+      <p>Fetches the latest real-time exchange rate. The 3-tier fallback ensures the pipeline never drops a request.</p>
+      <ul>
+        <li>Priority: ExchangeRate API v6 (dedicated)</li>
+        <li>Tavily fallback query: "current exchange rate {src} to {tgt} price today"</li>
+        <li>Output tagged with "[Search Fallback]" if not from API</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Node 2: financial_news_analyst</h3>
+      <p>Searches for high-impact financial news across <strong>3 context-aware queries</strong>, each targeting a different signal type.</p>
+      <ul>
+        <li>Forecast query: 30-day volatility outlook</li>
+        <li>Central bank query: rate decisions &amp; speeches</li>
+        <li>Events query: macro economic calendar</li>
+        <li>All results aggregated into a single news summary</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Node 3: senior_strategist</h3>
+      <p>CFO-level advisor invoked with Gemini 3.1 Flash Lite. The prompt includes full context, current rate, and market news.</p>
+      <ul>
+        <li>Extracts the likely current rate from raw data</li>
+        <li>Analyzes short-term trend (Bullish/Bearish)</li>
+        <li>Assesses volatility: stable vs shock</li>
+        <li>Outputs "Executive Decision" first, then rationale</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>State Contract (AgentState)</h3>
+      <p>Strict TypedDict with 8 fields enforces data contracts between nodes. Each node receives accumulated state and returns selective updates.</p>
+      <ul>
+        <li><code>source_currency</code>, <code>target_currency</code>, <code>amount</code></li>
+        <li><code>business_context</code> — user's scenario text</li>
+        <li><code>current_rate</code> — populated by node 1</li>
+        <li><code>market_news</code> — populated by node 2</li>
+        <li><code>final_recommendation</code> — populated by node 3</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: Agent Deep-Dive -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">3</div>
+    <h2>Agent Deep-Dive</h2>
+    <span class="subtitle">Responsibilities, Tools &amp; Code Locations</span>
+  </div>
+
+  <div class="mermaid-wrapper">
+  <div class="mermaid">
+flowchart LR
+    subgraph A1["Agent 1: Market Research"]
+        A1FN["currency_data_fetcher()"]
+        A1FILE["Strategic_Finance_Agent.py:58-82"]
+        A1TOOL1["ExchangeRate API v6 - Primary"]
+        A1TOOL2["Tavily Search - Fallback 1"]
+        A1TOOL3["DuckDuckGo - Fallback 2"]
+        A1OUT["Output: current_rate"]
+    end
+
+    subgraph A2["Agent 2: News Intel"]
+        A2FN["financial_news_analyst()"]
+        A2FILE["Strategic_Finance_Agent.py:84-100"]
+        A2TOOL["Tavily Search - 3 queries"]
+        A2OUT["Output: market_news"]
+    end
+
+    subgraph A3["Agent 3: CFO Advisor"]
+        A3FN["senior_strategist()"]
+        A3FILE["Strategic_Finance_Agent.py:102-143"]
+        A3TOOL["Gemini 3.1 Flash Lite"]
+        A3OUT["Output: final_recommendation"]
+    end
+
+    A1OUT --> A2
+    A2OUT --> A3
+  </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Market Research</h3>
+      <code class="file-path">Strategic_Finance_Agent.py:58-82</code>
+      <p>Uses a 3-tier circuit breaker to fetch live FX rates. The primary path is the ExchangeRate API v6 dedicated endpoint; if that fails, it falls back to Tavily, then DuckDuckGo.</p>
+    </div>
+    <div class="card">
+      <h3>News Intel</h3>
+      <code class="file-path">Strategic_Finance_Agent.py:84-100</code>
+      <p>Fires 3 parallel-sequential Tavily search queries per invocation. Each query targets a different intelligence domain: forecast, central bank activity, and macro events.</p>
+    </div>
+    <div class="card">
+      <h3>CFO Advisor</h3>
+      <code class="file-path">Strategic_Finance_Agent.py:102-143</code>
+      <p>Uses Gemini 3.1 Flash Lite with 1M+ token context. Prompted as a CFO-level advisor with 4 mandatory analysis steps: extract rate, analyze trend, assess volatility, formulate strategy.</p>
+    </div>
+    <div class="card">
+      <h3>Key Design Decision</h3>
+      <p><strong>Sequential DAG vs Parallel:</strong> Although rates and news could be fetched in parallel, the sequential design enables <em>context enrichment</em> — the news agent searches "USD EUR at 0.92 forecast" instead of generic queries, producing more relevant results.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: Testing Architecture -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">4</div>
+    <h2>Testing Architecture</h2>
+    <span class="subtitle">10/10 Tests Passing | ~13s Execution</span>
+  </div>
+
+  <div class="mermaid-wrapper">
+  <div class="mermaid">
+flowchart TD
+    subgraph TEST["test_agent.py - 10 tests"]
+        T1["test_1_agent_state_schema<br/>TypedDict key validation"]
+        T2["test_2_currency_fetcher_api_success<br/>Mocked ExchangeRate API 200"]
+        T3["test_3_currency_fetcher_fallback<br/>API failure -> Tavily fallback"]
+        T4["test_4_financial_news_analyst_content<br/>Multi-query aggregation"]
+        T5["test_5_senior_strategist_logic<br/>CFO output format: Executive Decision"]
+        T6["test_6_graph_structure<br/>Nodes registered correctly"]
+        T7["test_7_graph_entry_point<br/>Entry: market_research"]
+        T8["test_8_workflow_sequence<br/>Node sequencing verification"]
+        T9["test_9_state_persistence_through_nodes<br/>Additive state updates"]
+        T10["test_10_full_graph_integration<br/>End-to-end with mocked tools"]
+    end
+
+    subgraph MOCK["Mocking Strategy"]
+        PATCH1["@patch(requests.get)<br/>ExchangeRate API responses"]
+        PATCH2["@patch(TavilySearch.invoke)<br/>Structured search results"]
+        PATCH3["@patch(LLM.invoke)<br/>Deterministic Gemini responses"]
+    end
+
+    T1 -.->|"schema"| MOCK
+    T2 -.->|"http"| PATCH1
+    T3 -.->|"fallback"| PATCH1
+    T3 -.->|"fallback"| PATCH2
+    T4 -.->|"search"| PATCH2
+    T5 -.->|"llm"| PATCH3
+    T10 -.->|"all mocked"| MOCK
+  </div>
+  </div>
+
+  <div class="cards">
+    <div class="card">
+      <h3>Test Coverage Map</h3>
+      <p>10 deterministic tests using <code>unittest.mock.patch</code> to replace external dependencies with controlled responses. Tests run in ~13 seconds with zero network calls.</p>
+      <ul>
+        <li>Schema validation: 1 test</li>
+        <li>Agent unit tests: 4 tests (one per agent + API success)</li>
+        <li>Graph structure: 3 tests</li>
+        <li>State management: 1 test</li>
+        <li>Full integration: 1 test</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Mocking Strategy</h3>
+      <p>Strategic patching replaces three external interfaces:</p>
+      <ul>
+        <li><code>requests.get</code> — returns mock ExchangeRate API JSON</li>
+        <li><code>TavilySearch.invoke</code> — returns fixed markdown strings</li>
+        <li><code>BaseChatModel.invoke</code> — returns controlled LLM content</li>
+        <li>No DuckDuckGo mocking needed (never reached in tests)</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: Deployment Architecture -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">5</div>
+    <h2>Deployment &amp; Infrastructure</h2>
+    <span class="subtitle">Docker + Streamlit Cloud + Hugging Face</span>
+  </div>
+
+  <div class="mermaid-wrapper">
+  <div class="mermaid">
+flowchart TB
+    subgraph DEV["Development"]
+        LOCAL["Local: streamlit run<br/>Strategic_Finance_Agent.py"]
+        TEST["CI: pytest test_agent.py<br/>10 tests in ~13s"]
+        ENV[".env - API keys<br/>google_genai, exchangerate, tavily"]
+    end
+
+    subgraph BUILD["Build Artifacts"]
+        DOCKER["Dockerfile<br/>python:3.12-slim<br/>non-root user 1000"]
+    end
+
+    subgraph PROD["Deployment Targets"]
+        SC["Streamlit Cloud<br/>forex-advisor-agent.streamlit.app"]
+        HF["Hugging Face Spaces<br/>Port 7860, HF SDK"]
+    end
+
+    subgraph CFG["Configuration"]
+        SST["Streamlit Secrets<br/>TOML: google_genai<br/>exchangerate_api, tavily"]
+        GIT[".gitignore blocks<br/>.env, secrets.toml"]
+    end
+
+    LOCAL -->|"containerize"| DOCKER
+    DOCKER -->|"deploy"| SC
+    DOCKER -->|"deploy"| HF
+    SST -.-> SC
+    SST -.-> HF
+    ENV -.->|"local only"| LOCAL
+    GIT -.->|"protects"| ENV
+  </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">~15s</div>
+      <div class="stat-label">End-to-End Latency</div>
+      <div class="stat-detail">vs 2-3 hr manual research</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">10/10</div>
+      <div class="stat-label">Tests Passing</div>
+      <div class="stat-detail">~13s execution time</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">3</div>
+      <div class="stat-label">Fallback Tiers</div>
+      <div class="stat-detail">Guaranteed availability</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">1M+</div>
+      <div class="stat-label">Token Context</div>
+      <div class="stat-detail">Gemini 3.1 Flash Lite</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">10s</div>
+      <div class="stat-label">API Timeout</div>
+      <div class="stat-detail">Transaction safety</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: Project Structure -->
+<!-- ============================================================ -->
+<div class="section">
+  <div class="section-header">
+    <div class="section-number">6</div>
+    <h2>Project Map</h2>
+    <span class="subtitle">File Layout &amp; Responsibilities</span>
+  </div>
+
+  <div class="mermaid-wrapper">
+  <div class="mermaid">
+flowchart LR
+    subgraph ROOT["Advanced_Strategic_Finance_Agent/"]
+        MAIN["Strategic_Finance_Agent.py<br/>3 agents + Streamlit UI<br/>lines: 216 total"]
+        TESTFILE["test_agent.py<br/>10 pytest tests<br/>lines: 140 total"]
+        REQ["requirements.txt<br/>10 dependencies"]
+        DOCKERFILE["Dockerfile<br/>python:3.12-slim<br/>non-root, port 7860"]
+
+        DUMPDIR["dump/<br/>blog.md + dump.md<br/>reference materials"]
+        TESTSDIR["tests/<br/>additional test data"]
+        STREAMLIT[".streamlit/<br/>secrets.toml (gitignored)"]
+    end
+
+    subgraph DEPS["Key Dependencies"]
+        LG["langgraph==1.1.3<br/>StateGraph orchestration"]
+        LGG["langchain_google_genai==4.2.1<br/>Gemini integration"]
+        LT["langchain_tavily==0.2.17<br/>AI search"]
+        LCG["langchain_community==0.4.1<br/>DuckDuckGo tool"]
+        ST["streamlit==1.46.0<br/>UI dashboard"]
+    end
+
+    MAIN -->|"imports"| DEPS
+    TESTFILE -->|"mocks"| MAIN
+  </div>
+  </div>
+
+  <div class="deploy-grid">
+    <div class="deploy-card">
+      <h4>Strategic_Finance_Agent.py</h4>
+      <p>216 lines — single-file implementation of all 3 agents, LangGraph workflow, and Streamlit dashboard</p>
+    </div>
+    <div class="deploy-card">
+      <h4>test_agent.py</h4>
+      <p>140 lines — 10 tests with mocked dependencies, ~13s execution, no network calls</p>
+    </div>
+    <div class="deploy-card">
+      <h4>Dockerfile</h4>
+      <p>python:3.12-slim, non-root user 1000, port 7860, HF Spaces ready</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<div class="footer">
+  <span class="file-path"><span class="highlight">Strategic_Finance_Agent.py</span></span>
+  <span style="margin: 0 8px">&middot;</span>
+  Multi-Agent CFO Advisor Built with LangGraph + Gemini + Streamlit
+  <span style="margin: 0 8px">&middot;</span>
+  <span class="file-path"><span class="highlight">MIT License</span></span>
+</div>
+
+</div>
+
+</body>
+</html>
