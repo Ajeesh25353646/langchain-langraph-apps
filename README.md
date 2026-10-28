@@ -1,6 +1,6 @@
 # LangChain & LangGraph Apps 🤖
 
-> **🚀 Started in June 2025** — Building AI agents before the agents boom. This repository showcases production-grade LLM applications built with LangChain, LangGraph, and modern AI orchestration frameworks, demonstrating real-world implementations of multi-agent systems, RAG pipelines, and autonomous workflows.
+> **🚀 Started in June 2025**: Building AI agents before the agents boom. This repository showcases production-grade LLM applications built with LangChain, LangGraph, and modern AI orchestration frameworks, demonstrating real-world implementations of multi-agent systems, RAG pipelines, and autonomous workflows.
 
 ---
 
@@ -22,6 +22,7 @@ This repository traces my **journey from AI beginner to production-grade develop
 
 ### 🚀 Production-Grade Systems (Advanced_apps/)
 - **🤖 Multi-Agent Orchestration**: Coordinated workflows with LangGraph
+- **🛡️ Guardrailed Support Agent**: Multi-agent customer support with layered security and evaluation suites (SupportAI_Core)
 - **🖼️ Multimodal RAG**: PDF Q&A with image/table understanding (CV project)
 - **💼 Strategic Intelligence**: CFO-level forex analysis agent
 - **📺 Video Analysis**: YouTube transcript analyzer with timestamps
@@ -41,6 +42,13 @@ langchain-langraph-apps/
 │   └── 📄 Text_pdf_RAG/                     # Text-based PDF Q&A (basic RAG)
 │
 ├── 📂 Advanced_apps/                        # 🚀 Production-grade systems
+│   ├── 🛡️ SupportAI_Core/                   # Guardrailed multi-agent support platform
+│   │   ├── main.py                          # LangGraph agent (guardrails, PII masking, HITL)
+│   │   ├── streamlit_app.py                 # Customer Portal + Supervisor Dashboard
+│   │   ├── tests/ · Evals/                  # Guardrail FPR + LLM-as-a-Judge suites
+│   │   ├── infra/                           # Azure Bicep modules (Container Apps, ACR)
+│   │   └── supportai_architecture.html      # Visual architecture page
+│   │
 │   ├── 🏦 Advanced_Strategic_Finance_Agent/ # CFO-level forex intelligence
 │   │   ├── Strategic_Finance_Agent.py       # Multi-agent orchestration (LangGraph)
 │   │   ├── test_agent.py                    # 10 comprehensive unit tests
@@ -130,12 +138,13 @@ langchain-langraph-apps/
 
 | Project | Type | Tech Stack | Highlights |
 |---------|------|------------|------------|
+| **SupportAI_Core** | Multi-Agent + Security | LangGraph, DeepSeek V4, Pinecone, Presidio, Azure | Layered guardrails (100% combined block rate), PII masking, HITL escalation, supervisor dashboard, LLM-as-a-Judge evals |
 | **Advanced_Strategic_Finance_Agent** | Multi-Agent | LangGraph, Gemini, Tavily | CFO-level forex analysis, 10 unit tests |
 | **Multimodal_PDF_RAG** | RAG + VLM | Gemini 2.5 Pro, FAISS, Unstructured | Image/table understanding, CV project |
 | **Text_Pdf_QA** | Advanced RAG | LangChain, Qwen3 Embeddings | Multiple retrievers, local mode |
 | **youtube_QA_bot** | Analysis | Gemini, YouTube API | Timestamp citations, transcript analysis |
 | **currency_converter_bot** | Agent | ReAct, Tavily, DDG | Real-time FX, dual search fallback |
-| **chatbot_with_memory** | Chat | LangGraph, FAISS | Persistent conversations |
+| **chatbot_with_memory** | Chat | LangGraph, MemorySaver | Persistent conversations |
 | **chatbot_without_memory** | Chat | Gemini/Ollama | Stateless, local/cloud modes |
 
 ---
@@ -178,10 +187,11 @@ Content Injection → Qwen3 Embeddings → FAISS → Retrieval → Generation
 Reason → Act (Search) → Observe → Reason → Answer
 ```
 
-### 4. **Privacy-First Design**
+### 4. **Privacy-First & Security-Layered Design**
 - Local embeddings (Qwen3 via Hugging Face)
 - Ollama for offline inference (Gemma3, Llama3.1)
 - Zero data leakage in confidential mode
+- Deterministic guardrails + PII anonymization before any LLM sees input (SupportAI_Core)
 
 ---
 
@@ -190,14 +200,16 @@ Reason → Act (Search) → Observe → Reason → Answer
 | Category | Technologies |
 |----------|-------------|
 | **Frameworks** | LangChain, LangGraph, LangSmith |
-| **LLMs** | Gemini 2.5 Pro, Gemini 3.1 Flash Lite, Gemma3, Llama3.1 |
-| **Embeddings** | Qwen/Qwen3-Embedding-0.6B, Hugging Face |
-| **Vector Stores** | FAISS |
-| **RAG Retrievers** | MultiQuery, ContextualCompression, VectorStore |
+| **LLMs** | DeepSeek V4, Gemini 2.5 Pro, Gemini 3.1 Flash Lite, Gemma3, Llama3.1 |
+| **Embeddings** | Qwen/Qwen3-Embedding-0.6B, BAAI/bge-base-en-v1.5, Hugging Face |
+| **Vector Stores** | FAISS, Pinecone |
+| **RAG Retrievers** | MultiQuery, ContextualCompression, VectorStore, FlashRank reranking |
 | **Search** | Tavily AI, DuckDuckGo |
 | **UI** | Streamlit |
 | **Local Inference** | Ollama |
-| **Testing** | pytest, unittest.mock |
+| **Security / PII** | Microsoft Presidio, deterministic guardrails, `<USER_INPUT>` isolation |
+| **Cloud / IaC** | Azure Container Apps, Bicep |
+| **Testing** | pytest, unittest.mock, LLM-as-a-Judge evaluation |
 
 ---
 
@@ -231,6 +243,7 @@ Master complex systems in Advanced_apps:
 6. `Text_Pdf_QA` → Multiple retrievers, contextual compression, local models
 7. `Advanced_Strategic_Finance_Agent` → Multi-agent orchestration with LangGraph, unit testing
 8. `Multimodal_PDF_RAG` → ⭐ **CV Project** - Full-stack RAG with VLM, dual-mode architecture
+9. `SupportAI_Core` → Guardrails, PII compliance, evaluation suites, cloud deployment
 
 This progression shows how I evolved from basic chatbots to sophisticated multi-agent systems.
 
@@ -266,7 +279,7 @@ All API keys should be stored in `.env` files (gitignored) and never committed.
 
 ## 📝 License
 
-MIT License — see [LICENSE](LICENSE) file for details.
+MIT License — per-project licenses apply where present (see each project directory).
 
 ---
 
@@ -282,8 +295,6 @@ Contributions are welcome! Please feel free to:
 ## 📧 Contact & Connect
 
 - **GitHub**: [@Ajeesh25353646](https://github.com/Ajeesh25353646)
-- **Portfolio**: [Add your portfolio link]
-- **LinkedIn**: [Add your LinkedIn]
 
 For questions about specific projects, check their individual README files or open an issue.
 
