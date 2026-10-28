@@ -1,0 +1,22 @@
+# Browser automation artifacts
+.playwright-mcp/
+.playwright-cli/
+
+# Superpowers brainstorm session state
+.superpowers/
+
+# Codebase knowledge-graph tooling output (regenerable, AST-only)
+**/graphify-out/
+.understand-anything/
+.codegraph/
+
+# Python
+__pycache__/
+*.pyc
+
+# Environment / secrets
+.env
+
+# OS
+.DS_Store
+Thumbs.db
