@@ -11,7 +11,7 @@
 
 ```
 SupportAI_Core/
-├── main.py                        # Active LangGraph state machine (9 nodes, DeepSeek V4 Flash)
+├── main.py                        # Active LangGraph state machine (10 nodes, DeepSeek V4 Flash)
 ├── streamlit_app.py               # Dual-view UI (Customer Portal + Supervisor Dashboard)
 ├── logger.py                      # SQLite + JSONL dual persistence for ticket logging
 ├── kb.json                        # Knowledge base (1137 QA pairs for RAG retrieval)
@@ -78,6 +78,7 @@ graph TD
     Start((Start))
     Guardrail["🛡️ Security Guardrail<br/>(Injections + URLs)"]:::security
     PII["🕵️ PII Masking<br/>(Presidio + SpaCy)"]:::security
+    Summarize["📝 Summarize<br/>(History Compression)"]:::agent
     Triage["👮 Triage Agent<br/>(Structured Routing)"]
     Tech["🛠️ Technical Node<br/>(RAG + Rerank)"]
     Inquiry["ℹ️ Inquiry Node<br/>(RAG + Rerank)"]
@@ -108,7 +109,8 @@ graph TD
     Start --> Guardrail
     Guardrail -- "Safe" --> PII
     Guardrail -- "Blocked" --> Respond
-    PII --> Triage
+    PII --> Summarize
+    Summarize --> Triage
     
     %% Specialist Routing
     Triage -- "Refund" --> Finance

@@ -1,7 +1,7 @@
 # Deployment Plan: SupportAI Core → Azure Container Apps
 
 ## Project Overview
-- **App:** SupportAI Core — 9-node LangGraph multi-agent support system
+- **App:** SupportAI Core — 10-node LangGraph multi-agent support system
 - **Stack:** Python 3.10, Streamlit, LangGraph, Pinecone, DeepSeek V4 Flash
 - **Target:** Azure Container Apps (consumption plan, scale-to-zero)
 - **Cost Target:** $0 within free tier limits

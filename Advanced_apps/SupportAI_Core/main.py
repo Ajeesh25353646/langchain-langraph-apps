@@ -896,8 +896,10 @@ def create_support_graph():
     workflow.add_node("human_review", human_approval_node)
     workflow.add_node("respond", response_node)
     
+    workflow.add_edge(START, "guardrail")
+
     workflow.add_conditional_edges(
-        START,
+        "guardrail",
         route_from_guardrail,
         {
             "pii_detection": "pii_detection",
